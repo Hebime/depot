@@ -45,6 +45,9 @@ class LineItemsController < ApplicationController
     @line_item = @cart.line_items.build
     @line_item.product = product
 
+    # Reset store counter
+    reset_store_count
+
     respond_to do |format|
       if @line_item.save
         format.html { redirect_to @line_item.cart, notice: 'Line item was successfully created.' }

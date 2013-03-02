@@ -1,8 +1,11 @@
 <% if notice %>
 <p id="notice"><%= notice %></p>
 <% end %>
-
 <h1>Your Programatic Catalog</h1>
+
+<% if @store_count > 5 %>
+<p>You have visited the store <%= pluralize(@store_count, 'time') %></p>
+<% end %>
 
 <% @products.each do |product| %>
 	<div class="entry">
