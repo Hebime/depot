@@ -10,12 +10,25 @@ class CombineItemsInCart < ActiveRecord::Migration
           cart.line_items.where(product_id: product_id).delete_all
 
           #replace with a single item
-          cart.line_items.create(product_id: product_id, quantity: quantity)
+          item = cart.line_items.build(product_id: product_id)
+          item.quantity = quantity
+          item.save!
         end
       end
     end
   end
 
   def down
+    #split items with quantity > 1 nto multiple items
+    LineItem.where("quantity>1").each do |line_item|
+      #add individual items
+      line_item.quantity.times do
+        LineItem.create cart_id: line_item.cart_id,
+          product_id: line_item.product_id
+      end
+
+      #remove original items
+      line_item.destroy
+    end
   end
 end
