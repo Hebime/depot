@@ -44,7 +44,7 @@ class LineItemsController < ApplicationController
     product = Product.find(params[:product_id])
     @line_item = @cart.add_product(product.id)
     @line_item.product = product
-    
+
     # Reset store counter
     reset_store_count
 
@@ -81,11 +81,17 @@ class LineItemsController < ApplicationController
   def destroy
     #return render text: "#{params[:id]}"
     @line_item = LineItem.find(params[:id])
-    cart_id = @line_item.cart_id
-    @line_item.destroy
+    @line_item.quantity -= 1
+
+    if (@line_item.quantity == 0)
+      @line_item.destroy
+    else
+      @line_item.save
+    end
 
     respond_to do |format|
-      format.html { redirect_to cart_url(cart_id), notice: 'Item successfully deleted.' }
+      format.html { redirect_to store_url }
+      format.js   { @cart = current_cart }
       format.json { head :no_content }
     end
   end
